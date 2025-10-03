@@ -19,6 +19,39 @@ class TranslationService {
         userId = null
       } = options;
 
+      // Demo mode - return mock translation
+      if (process.env.NODE_ENV === 'demo' || !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('test')) {
+        const mockTranslations = {
+          'en': `[DEMO] Translated to English: "${text}"`,
+          'es': `[DEMO] Traducido al español: "${text}"`,
+          'fr': `[DEMO] Traduit en français: "${text}"`,
+          'de': `[DEMO] Auf Deutsch übersetzt: "${text}"`,
+          'it': `[DEMO] Tradotto in italiano: "${text}"`,
+          'pt': `[DEMO] Traduzido para português: "${text}"`,
+          'zh': `[DEMO] 翻译成中文: "${text}"`,
+          'ja': `[DEMO] 日本語に翻訳: "${text}"`,
+          'ko': `[DEMO] 한국어로 번역: "${text}"`,
+          'ru': `[DEMO] Переведено на русский: "${text}"`,
+          'ar': `[DEMO] مترجم إلى العربية: "${text}"`,
+          'hi': `[DEMO] हिंदी में अनुवादित: "${text}"`
+        };
+
+        const translatedText = mockTranslations[targetLang] || `[DEMO] Translated to ${targetLang}: "${text}"`;
+        const processingTime = Date.now() - startTime;
+        const detectedSourceLang = sourceLang === 'auto' ? 'en' : sourceLang;
+
+        console.log(`📝 Demo translation: ${text} → ${translatedText}`);
+
+        return {
+          translatedText,
+          sourceLanguage: detectedSourceLang,
+          targetLanguage: targetLang,
+          processingTime,
+          confidence: 0.8,
+          translationId: `demo_${Date.now()}`
+        };
+      }
+
       // Create system prompt based on context
       const systemPrompt = this.createSystemPrompt(context);
       
